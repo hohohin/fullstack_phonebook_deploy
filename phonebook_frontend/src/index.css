@@ -1,0 +1,28 @@
+li {
+    list-style-type: "\1F4DE";
+}
+
+.addBtn{
+    border: 0;
+    background: greenyellow;
+    text-align: center;
+    border-radius: 20%;
+}
+
+.addConfirmNote{
+    width:full;
+    border: 3;
+    background-color: lightgray;
+    padding: 3;
+    font-style: italic;
+    color: aliceblue;
+}
+
+.deleteBtn{
+    background:rgb(238, 185, 185);
+    border: 1;
+    border-radius: 100%;
+    padding-left: 0.3ch;
+    padding-right: 0.3ch;
+    line-height: 0.8;
+}
