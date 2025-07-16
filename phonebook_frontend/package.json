@@ -10,7 +10,7 @@
     "preview": "vite preview",
     "server": "json-server -p 3001 db.json",
     "clean": "rm -rf dist && rm -rf ../dist",
-    "build:ui": "npm run build && cp -r dist ../",
+    "build:ui": "npm run build && cp -r dist ../ && rm -rf dist",
     "build:full": "npm run clean && npm run build:ui"
   },
   "dependencies": {
