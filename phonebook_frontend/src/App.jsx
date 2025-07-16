@@ -6,7 +6,7 @@ import Filter from './components/Filter'
 import Notification from './components/Notification'
 import './index.css'
 
-const baseUrl = '/api/persons'
+const baseUrl = '/api/persons' //still dont know the diff
 // const baseUrl = 'http://localhost:3001/contacts'
 
 
