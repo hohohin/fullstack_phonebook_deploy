@@ -12,9 +12,11 @@ const PORT = process.env.PORT || 3001
 const Contact = require('./models/contact')
 
 app.get('/info',(request,response)=>{
-    const length = Contact.find({}).length
-    const volume = `Phonebook has info for ${length} people <br> ${new Date().toString()}`
-    response.send(volume)
+    Contact.find({}).then(all=>{
+      const length = all.length
+      const volume = `Phonebook has info for ${length} people <br> ${new Date().toString()}`
+      response.send(volume)
+    })
 })
 
 app.get('/api/persons',(request,response)=>{
@@ -80,12 +82,7 @@ app.post('/api/persons',(request,response)=>{
   Contact.find({name:body.name}).then(contact=>{
     console.log(contact)
     if(contact.length>0){
-      const contact = new Contact({
-        name:body.name,
-        number:body.number
-      })
-      console.log('dada') // use middleware to change to HTTP PUT
-      response.status(200).end()
+
     }
     else{
       const contact = new Contact({
@@ -99,6 +96,15 @@ app.post('/api/persons',(request,response)=>{
         console.log(`contact ${savedContact.name} saved`)
       })
     }
+  })
+})
+
+app.put('/api/persons/:id',(req,res)=>{
+  const id = req.params.id
+  const body = req.body
+  Contact.findByIdAndUpdate(id,{number:body.number},{returnOriginal:false})
+  .then(updated=>{
+    res.json(updated)
   })
 })
 

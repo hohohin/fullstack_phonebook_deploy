@@ -6,7 +6,7 @@ import Filter from './components/Filter'
 import Notification from './components/Notification'
 import './index.css'
 
-const baseUrl = '/api/persons' //still dont know the diff
+const baseUrl = '/api/persons' //-add proxy so that backend and frontend can communicate in one termianl
 // const baseUrl = 'http://localhost:3001/contacts'
 
 
@@ -15,12 +15,13 @@ function App() {
   const [nameInput, setNameInput] = useState('')
   const [numberInput,setNumberInput] = useState('')
   const [contacts, setContact] = useState([])
+  const [blink,setBlink] = useState(0)
 
   const [message,setMessage] = useState(null)
   const [msgtype,setType] = useState({backgroundcolor:'blue',color:'white'})
 
   function blinkMessage(type,text) {
-    console.log('blinking',type,text,message);
+    console.log('blinking',type,text)
     
     if(type==='good'){
         setType({backgroundColor:'green', color:'yellowgreen'})
@@ -74,8 +75,10 @@ function App() {
         contact.id === respond.data.id 
         ? {...contact, number: respond.data.number}
         : contact
-      )
+    )
       setContact(renew)
+      console.log('contacts now:', contacts);
+      
       blinkMessage('good',`${respond.data.name}'s number is renewed`)
     })
     .catch(error=>{
