@@ -76,9 +76,7 @@ function App() {
         ? {...contact, number: respond.data.number}
         : contact
     )
-      setContact(renew)
-      console.log('contacts now:', contacts);
-      
+      setContact(renew)      
       blinkMessage('good',`${respond.data.name}'s number is renewed`)
     })
     .catch(error=>{
@@ -88,8 +86,7 @@ function App() {
 
   const confirmAdd = () => {
     const newContact = {
-      // id: (contacts.length + 1).toString(),
-      name: nameInput,
+      name: nameInput,  
       number: numberInput
     }
 
@@ -97,7 +94,10 @@ function App() {
     .then(response=>{
       blinkMessage('good',`${response.data.name} is added`)
       setContact(contacts.concat(response.data))
-      // console.log(response.data);
+    })
+    .catch(error=>{
+      // console.log(error)
+      blinkMessage('error',error.response.data.error)
     })
 
     setNameInput('')
@@ -109,7 +109,6 @@ function App() {
     if (window.confirm(`delete ${ptd[0].name}?`)){
     axios.delete(`${baseUrl}/${id}`)
     .then(respond=>{
-      // console.log(respond.data)
       setContact(contacts.filter(contact=>contact.id != respond.data.id))
       // alert(`${respond.data.name} is deleted`)
       blinkMessage('neutral',`${respond.data.name} is deleted`)
@@ -118,7 +117,6 @@ function App() {
   }
 
   const handleName = (event) => {
-    console.log(event.target.value)
     setNameInput(event.target.value)
   }
 

@@ -32,14 +32,6 @@ app.get('/api/persons/:id',(request,response,next)=>{
     else{response.status(404).end()}
   })
   .catch(error=>next(error))
-  // const id = request.params.id
-  // const person = persons.find(person=>person.id === id)
-  // if(person){
-  //     response.json(person)
-  // }
-  // else{
-  //     response.status(404).end()
-  // }
 })
 
 morgan.token('body',(req)=>{return JSON.stringify(req.body)})
@@ -47,74 +39,74 @@ app.use(morgan(':method :url :status :res[content-length] - :response-time ms :b
 
 app.delete('/api/persons/:id',(request,response,next)=>{
     const id = request.params.id
-    // persons = persons.filter(person=>person.id !== id)
     Contact.findByIdAndDelete(id).then(result=>{
       response.status(204).end()
     })
     .catch(error=>next(error))
-    
-    
-    // response.json(request.body)
 })
 
-app.post('/api/persons',(request,response)=>{
+app.post('/api/persons',(request,response,next)=>{
   const body = request.body
-  // const id = Math.floor(Math.random()*1000)
-  // const nameCheck = persons.map(person=>person.name)
-
   if(!body.name || !body.number){
     response.status(404)
     .json({error:'name or number is missing'})
     .end()
   }
-  // Using findOneAndUpdate - not recommend cus there's no schema check by default compaired to save()
-  // Contact.findOneAndUpdate(
-  //   {name:body.name},
-  //   {number:body.number},
-  //   {returnOriginal:false}
-  // ).then(renewed=>{
-  //   if(renewed){
-  //     console.log(`${renewed.name} is updated`)
-  //     response.json(renewed)
-  //   }
-  // })
 
-  Contact.find({name:body.name}).then(contact=>{
+  Contact.find({name:body.name})
+  .then(contact=>{
     console.log(contact)
     if(contact.length>0){
-
+      Contact.findOneAndUpdate(
+        {name:body.name},
+        {number:body.number},
+        {returnOriginal:false},
+        {runValidators:true}
+      ).then(renewed=>{
+        if(renewed){
+          console.log(`${renewed.name} is updated`)
+          response.json(renewed)
+        }
+      })
+      .catch(error=>next(error))
     }
     else{
       const contact = new Contact({
-        // id:id.toString(),
         name:body.name,
         number:body.number
       })
       contact.save().then(savedContact=>{
-        // persons = persons.concat(savedContact)
         response.json(savedContact)
         console.log(`contact ${savedContact.name} saved`)
       })
+      .catch(error=>next(error))
     }
   })
 })
 
-app.put('/api/persons/:id',(req,res)=>{
+app.put('/api/persons/:id', (req,res)=>{
   const id = req.params.id
   const body = req.body
-  Contact.findByIdAndUpdate(id,{number:body.number},{returnOriginal:false})
+  Contact.findByIdAndUpdate(
+    id,
+    {number:body.number},
+    {returnOriginal:false},
+    {runValidators:true}
+  )
   .then(updated=>{
+    console.log(`${updated.name}'s number has been changed`)
     res.json(updated)
   })
 })
 
 const errorHandler = (error, request, response, next) => {
-  console.error(error.message)
-
+  console.error('error message: ',error.message)
+  console.error('error name: ',error.name)
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
-  } 
-
+  } else if (error.name === 'ValidationError') {
+    return response.status(400).json({ error: error.message })
+  }
   next(error)
 }
 
